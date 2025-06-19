@@ -1,0 +1,84 @@
+Loading required package: zoo
+
+Attaching package: ‘zoo’
+
+The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+Registered S3 method overwritten by 'quantmod':
+  method            from
+  as.zoo.data.frame zoo 
+Loading required package: MASS
+Loading required package: strucchange
+Loading required package: sandwich
+Loading required package: urca
+Loading required package: lmtest
+randomForest 4.7-1.2
+Type rfNews() to see new features/changes/bug fixes.
+
+Attaching package: ‘randomForest’
+
+The following object is masked from ‘package:ggplot2’:
+
+    margin
+
+
+Attaching package: ‘MTS’
+
+The following object is masked from ‘package:vars’:
+
+    VAR
+
+p: 1 , P: 1  RMSE: 15.3216 
+p: 1 , P: 2  RMSE: 14.19369 
+p: 1 , P: 3  RMSE: 15.03078 
+p: 1 , P: 4  RMSE: 46.22637 
+p: 1 , P: 5  RMSE: 39.43002 
+p: 2 , P: 1  RMSE: 14.45398 
+p: 2 , P: 2  RMSE: 14.25454 
+p: 2 , P: 3  RMSE: 13.32171 
+p: 2 , P: 4  RMSE: 34.14086 
+p: 2 , P: 5  RMSE: 29.44415 
+p: 3 , P: 1  RMSE: 14.12345 
+p: 3 , P: 2  RMSE: 11.11849 
+p: 3 , P: 3  RMSE: 11.50497 
+p: 3 , P: 4  RMSE: 33.31206 
+p: 3 , P: 5  RMSE: 31.12909 
+p: 4 , P: 1  RMSE: 13.27417 
+p: 4 , P: 2  RMSE: 10.63087 
+p: 4 , P: 3  RMSE: 12.41399 
+p: 4 , P: 4  RMSE: 42.64183 
+p: 4 , P: 5  RMSE: 26.24882 
+p: 5 , P: 1  RMSE: 13.36556 
+p: 5 , P: 2  RMSE: 11.29634 
+p: 5 , P: 3  RMSE: 12.15363 
+p: 5 , P: 4  RMSE: 38.72516 
+p: 5 , P: 5  RMSE: 29.55125 
+p: 6 , P: 1  RMSE: 13.54663 
+p: 6 , P: 2  RMSE: 11.44317 
+p: 6 , P: 3  RMSE: 12.17137 
+p: 6 , P: 4  RMSE: 40.45977 
+p: 6 , P: 5  RMSE: 28.56222 
+p: 7 , P: 1  RMSE: 14.48376 
+p: 7 , P: 2  RMSE: 10.45876 
+p: 7 , P: 3  RMSE: 10.14762 
+p: 7 , P: 4  RMSE: 34.62602 
+p: 7 , P: 5  RMSE: 29.51828 
+p: 8 , P: 1  RMSE: 15.11534 
+p: 8 , P: 2  RMSE: 10.6457 
+p: 8 , P: 3  RMSE: 11.29459 
+p: 8 , P: 4  RMSE: 42.28684 
+p: 8 , P: 5  RMSE: 29.64175 
+p: 9 , P: 1  RMSE: 17.22319 
+p: 9 , P: 2  RMSE: 11.53367 
+p: 9 , P: 3  RMSE: 11.71606 
+p: 9 , P: 4  RMSE: 37.98861 
+p: 9 , P: 5  RMSE: 27.76804 
+p: 10 , P: 1  RMSE: 15.7918 
+p: 10 , P: 2  RMSE: 11.33449 
+p: 10 , P: 3  RMSE: 11.23033 
+p: 10 , P: 4  RMSE: 30.08538 
+p: 10 , P: 5  RMSE: 29.93433 
+Scale for x is already present.
+Adding another scale for x, which will replace the existing scale.

@@ -1,0 +1,18 @@
+% --------------------------------------------------------------------------------------------------
+\section{Modelling}
+\red{\begin{itemize}
+ \item Check linearity, seasonality
+ \item Holt-Winters : not good method for this high frequency dataset
+\end{itemize}}
+
+% --------------------------------------------------------------------------------------------------
+\subsection{SARIMA}
+
+\red{\begin{itemize}
+ \item results from auto.arima
+ \item talk about problem of time needed to compute ARIMA -> use fourier
+ \item without seasonality -> very bad results !!
+ \item without covariates  -> very bad results !! + show new seasons not seen in 'power' (8,12,16 hours period) -> usefull to use it ?? with fourier, we could add several periods 
+ \item with covariates -> no improvements. start without to try and add at end
+ \item with seasonality: very long so can not do grid-search
+\end{itemize}}

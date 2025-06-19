@@ -1,0 +1,104 @@
+% ---------------------------------------------------------------------------------------------------------------
+\documentclass[paper=a4, fontsize=12pt]{article}
+\usepackage{lipsum}% http://ctan.org/pkg/lipsum
+\usepackage[explicit]{titlesec}% http://ctan.org/pkg/titlesec
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,pdftex]{geometry}
+%\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{bbold}
+\usepackage{wrapfig}
+\usepackage{pdfpages}
+\usepackage{natbib}
+\usepackage{subfig}
+\usepackage{array,multirow}
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{here}
+\usepackage{efbox,graphicx}
+\efboxsetup{linecolor=black,linewidth=0.7pt}
+
+% ------------------------------------------------------------------------------
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\definecolor{bleu}{rgb}{0, 0, 0.65}
+\definecolor{gris}{rgb}{0.86, 0.86, 0.86}
+\definecolor{vert}{rgb}{0.0, 0.5, 0.0}
+\newcommand{\red}{\textcolor{red}}
+\newcommand{\blue}{\textcolor{bleu}}
+
+\bibliographystyle{plainnat}
+
+\makeatletter
+  \def\vhrulefill#1{\leavevmode\leaders\hrule\@height#1\hfill \kern\z@}
+\makeatother
+
+\def\Vhrulefill{\leavevmode\leaders\hrule height 0.8ex depth \dimexpr1.4pt-0.7ex\hfill\kern0pt}
+%\titleformat{\section}{\bfseries\Large}{}{-25pt}{\noindent ~ \thesection.\quad#1~~\Vhrulefill}
+%\titleformat{\subsection}{\large}{}{-2pt}{\thesubsection.\quad#1~~\textcolor{gris}{\vhrulefill{6pt}}}
+\titleformat{\section}{\bfseries\Large}{}{-25pt}{\noindent ~ #1~~\Vhrulefill}
+\titleformat{\subsection}{\large}{}{-2pt}{#1~~\textcolor{gris}{\vhrulefill{6pt}}}
+
+% ------------------------------------------------------------------------------
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=R,                     % the language of the code
+}
+\lstset{style=mystyle}
+
+% ------------------------------------------------------------------------------
+\newcommand{\HRule}[1]{\rule{\linewidth}{#1}} % Horizontal rule
+\makeatletter % Title
+\def\printtitle{{\centering \@title\par}}
+\makeatother
+
+\makeatletter % Author
+\def\printauthor{{\centering \large \@author}}
+\makeatother
+
+% ------------------------------------------------------------------------------
+\title{\normalsize \textsc{} %Title page subtitle}
+\\[2.0cm]\HRule{0.5pt} \\
+\LARGE \textbf{\uppercase{Time Series Analysis}}
+\HRule{2pt} \\ [0.5cm]\vspace*{0.2cm}
+\Large{\textit{Course poject}}\\
+\vspace*{3.5cm}
+\normalsize}
+
+\author{Joanne ADAM\\Data ScienceTech Institut\\
+\texttt{joanne.adam@edu.dsti.institute}\\}
+
+
+% ------------------------------------------------------------------------------
+\begin{document}
+\thispagestyle{empty} \printtitle \vfill\printauthor
+\newpage
+
+\input{database}
+\input{modelling}
+
+\end{document}

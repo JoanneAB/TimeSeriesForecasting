@@ -2,7 +2,21 @@
 calc_rmse <- function(x, y)
   {
   # Compute RMSE from prediction
-  return(sqrt(mean((x-y)^2)))
+  return(sqrt(mean((x-y)^2, na.rm=TRUE)))
+  }
+
+# --------------------------------------------------------------------------------------------------
+calc_aic <- function(v_train, v_test, v_pred)
+  {
+  # Calculate RMSE:
+  rmse = calc_rmse(v_test, v_pred)
+  
+  # Get number of features:
+  n_features = length(v_train)
+    
+  n = length(v_test) 
+  aic = 2*n_features - 2*n*log(rmse) 
+  return(aic)
   }
 
 # --------------------------------------------------------------------------------------------------

@@ -1,15 +1,59 @@
 # --------------------------------------------------------------------------------------------------
-#install.packages("MTS")
+#install.packages("xgboost")
 
 library(vars)
 library(randomForest)
 library(MTS)
+library(xgboost)
 
 # --------------------------------------------------------------------------------------------------
+do_xgboost <- function(v_train, v_test, covariates=FALSE)
+  {
+  if (covariates)
+    {
+    # TODO : add covariates
+    }
+  else
+    {
+    start.time <- Sys.time()
+    data = as.vector(v_train[,power])[1:97]
+    for (i in 1:(length(as.vector(v_train[,power]))-97) )
+      {
+      data = rbind(data, as.vector(v_train[,power])[(i+1):(i+97)])
+      }
+
+    model <- xgboost(data=data[,1:96], label=data[,97],
+      max_depth=10, eta=0.1, nrounds=100, nthread=4, objective="reg:squarederror",
+      verbose=FALSE)
+
+    # rmse=19.72 ; AIC=12 659
+
+    pred    = rep(NULL, 192)
+    newdata = tail(v_train[,power],96)
+    for (t in 1:192)
+      {
+      pred[t] = predict(model, matrix(newdata,1,96))
+      newdata = c(newdata[-1],pred[t])
+      }
+
+    end.time <- Sys.time()
+    cat("timing :", (end.time-start.time), "\n") # 1min 47
+    ts_xgboost = ts(pred, start=start(v_test), end=end(v_test), frequency=96)
+
+    rmse = calc_rmse(ts_xgboost, v_test[,power])
+    cat("RMSE XGBoost (without covariates) :", rmse, "\n")
+
+    #aic_xgboost  = calc_aic(v_train[,power], v_test[,power], ts_xgboost)
+    #cat("AIC  XGBoost no cov:", aic_xgboost, "\n")
+    }
+  return(pred)
+  }
+
 # --------------------------------------------------------------------------------------------------
 do_randomForest <- function(v_train, v_test)
   {
-  # We based our forecast on the 96 previous observations, but that can be optimized (by CV)
+  # Forecast based on the 96 previous observations.
+  start.time <- Sys.time()
   nrow = nrow(v_train)
   data = as.vector(v_train[,power])[1:(nrow-96)]
   for (i in 1:(nrow-96))
@@ -17,19 +61,24 @@ do_randomForest <- function(v_train, v_test)
     data = rbind(data, as.vector(v_train[,power])[(i+1):(i+96)])
     }
 
+#  fit = randomForest(v_train[,oat], v_train[,power])
   fit = randomForest(x=data[,-96], y=data[,96])
+  checkresiduals(fit)
+  tsdisplay(fit)
+
+  end.time <- Sys.time()
+  cat("timing :", (end.time-start.time), "\n") # 1min 47
+
   prev = predict(fit, newdata=v_test[,power])
 
-#  fit = randomForest(v_train[,oat], v_train[,power])
-#  checkresiduals(fit)
-#  tsdisplay(fit)
-#
-#  prev = predict(fit, newdata=v_test[,power])
+  rmse = calc_rmse(prev$mean, v_test[,power])
+  cat("RMSE Random Forest (without covariates) :", rmse, "\n")
+
   return(prev)
   }
 
 # --------------------------------------------------------------------------------------------------
-do_NNet <- function(v_train, covariates)
+do_NNet <- function(v_train, v_test, covariates=FALSE)
   {
   if ( covariates )
     {
@@ -45,7 +94,9 @@ do_NNet <- function(v_train, covariates)
     cat("timing :", (end.time-start.time), "\n") # 1min 47
 
     prev = forecast(fit, xreg=v_train[,oat], h=96) 
-    return(prev)
+
+    rmse = calc_rmse(prev$mean, v_test[,power])
+    cat("RMSE NN (with covariates) :", rmse, "\n")
     }
   else
     {
@@ -65,8 +116,11 @@ do_NNet <- function(v_train, covariates)
     cat("timing :", (end.time-start.time), "\n") # 1min 47
 
     prev = forecast(fit, h=96)  
-    return(prev)
+
+    rmse = calc_rmse(prev$mean, v_test[,power])
+    cat("RMSE NN (without covariates) :", rmse, "\n")
     }
+  return(prev)
   }
 
 # --------------------------------------------------------------------------------------------------

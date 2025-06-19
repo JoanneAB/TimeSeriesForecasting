@@ -6,7 +6,7 @@ library(MTS)
 
 # --------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------
-do_arima <- function(v_train, covariates, auto)
+do_arima <- function(v_train, v_test, covariates, auto)
   {
   # AUTO-ARIMA
   if (auto)
@@ -37,7 +37,9 @@ do_arima <- function(v_train, covariates, auto)
     cat("timing :", (end.time-start.time), "\n") # -> 6 sec
 
     fc <- forecast(fit, xreg=v_train[,oat])
-    return(fc)
+
+    rmse = calc_rmse(v_test[,power], fc$mean)
+    cat("RMSE arima (with covariates) :", rmse, "\n")
     }
   else
     {
@@ -57,15 +59,18 @@ do_arima <- function(v_train, covariates, auto)
     # Only in 1st period of PACF but 3 periods on ACF !!
 
     fc <- forecast(fit)
-    return(fc)
+
+    rmse = calc_rmse(v_test[,power], fc$mean)
+    cat("RMSE arima (without covariates) :", rmse, "\n")
     }
+  return(fc)
   }
 
 
 # --------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------
 # SARIMA (with seasonality)
-do_sarima <- function(v_train, covariates, auto)
+do_sarima <- function(v_train, v_test, covariates, auto)
   {
   if ( auto )
     {
@@ -77,7 +82,9 @@ do_sarima <- function(v_train, covariates, auto)
     cat("timing :", (end.time-start.time), "\n")
 
     fc <- forecast(fit, xreg=v_train[,oat])
-    return(fc)
+
+    rmse = calc_rmse(v_test[,power], fc$mean)
+    cat("RMSE fourier (with covariates, auto) :", rmse, "\n")
     }
 
   if ( covariates )
@@ -100,7 +107,6 @@ do_sarima <- function(v_train, covariates, auto)
     cat("timing :", (end.time-start.time), "\n")
 
     fc <- forecast(fit, xreg=v_train[,oat])
-    return(fc)
     }
   else
     {
@@ -120,15 +126,16 @@ do_sarima <- function(v_train, covariates, auto)
     cat("timing :", (end.time-start.time), "\n")
 
     fc <- forecast(fit)
-    return(fc)
     }
+
+  return(fc)
   }  
   
   # --------------------------------------------------------------
   # --------------------------------------------------------------
   # --- FOURIER ---
 # --------------------------------------------------------------------------------------------------
-do_sarima_fourier <- function(v_train)
+do_arima_fourier <- function(v_train, v_test)
   {
   for (K in c(4)) #,10))
     {
@@ -143,12 +150,15 @@ do_sarima_fourier <- function(v_train)
     cat("timing fourier:", (end.time-start.time), "\n")
 
     fc_fourier <- forecast(fit_fourier, xreg=fourier(v_train[,power], K, 96))
+
+    rmse = calc_rmse(v_test[,power], fc_fourier$mean)
+    cat("RMSE fourier (single season) :", rmse, "\n")
     }
   return(fc_fourier)
   }
 
 # --------------------------------------------------------------------------------------------------
-do_arima_multi_fourier <- function(v_train)
+do_arima_multi_fourier <- function(v_train, v_test)
   {
   # Plot to search for the seasons:
 #  fit <- Arima(v_train[,power], order=c(2,1,3))
@@ -178,6 +188,8 @@ do_arima_multi_fourier <- function(v_train)
   tsdisplay(fit_msts$residuals)
   fc_msts <- forecast(fit_msts, xreg=fourier(v_train_msts, K, 96))
 
+  rmse = calc_rmse(v_test[,power], fc_msts$mean)
+  cat("RMSE fourier (multi seasons) :", rmse, "\n")
   return(fc_msts)
   }
 

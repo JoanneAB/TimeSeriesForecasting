@@ -29,8 +29,8 @@ oat   <- "OAT (F)"
 power <- "Power (kW)"
 nrow  <- nrow(data)
 
-#summary(data)
-#head(data)
+summary(data)
+head(data)
 
 # Three seasons : 9 hours, 15 hours and 1 day 
 #data$Timestamp[1+36] - data$Timestamp[1]
@@ -96,7 +96,7 @@ autoplot(v_train[,oat], series="OAT, train") + autolayer(v_test[,oat], series="O
 
 # --------------------------------------------------------------------------------------------------
 # check correlation
-#cc.test(z_train[,oat], z_train[,power], max.lag=10, plot=FALSE) 
+cc.test(v_train[,oat], v_train[,power], max.lag=10, plot=FALSE) 
 # p-values always 0.000<0.05 -> reject H0 -> no zero correlation -> high correlation
 
 # --------------------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ autoplot(v_train[,oat], series="OAT, train") + autolayer(v_test[,oat], series="O
 # --- MODELLING ------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------
 # Remove a linear trend by substraction of shifted curve:
-#check_linearity(v_train)
+check_linearity(v_train)
 
 # --------------------------------------------------------------------------------------------------
 # - Holt-Winters
@@ -116,87 +116,76 @@ autoplot(v_train[,oat], series="OAT, train") + autolayer(v_test[,oat], series="O
 
 # --------------------------------------------------------------------------------------------------
 # - ARIMA, no seasonality
-#fc_arima_nocov <- do_arima(v_train, covariates=FALSE, auto=FALSE)
-#fc_arima_cov   <- do_arima(v_train, covariates=TRUE , auto=FALSE)
-#
-#autoplot(v_train[,power]) +
-#  autolayer(v_test[,power]             , series="test") +
-#  autolayer(fc_arima_nocov$mean, series="no cov", PI=FALSE) +
-#  autolayer(fc_arima_cov$mean  , series="cov", PI=FALSE) +
-#  xlim(c(xmin+0.5, xmax-0.5)) + ylim(c(100,350))
+plot_text("ARIMA\n\n1. Without covariates\n2. With covariates\n")
+fc_arima_nocov <- do_arima(v_train, v_test, covariates=FALSE, auto=FALSE)
+plot(fc_arima_nocov, xlim=c(xmin,xmax))
+
+fc_arima_cov   <- do_arima(v_train, v_test, covariates=TRUE , auto=FALSE)
+plot(fc_arima_nocov, xlim=c(xmin,xmax))
+
+autoplot(v_train[,power]) +
+  autolayer(v_test[,power]             , series="test") +
+  autolayer(fc_arima_nocov$mean, series="no cov", PI=FALSE) +
+  autolayer(fc_arima_cov$mean  , series="cov", PI=FALSE) +
+  xlim(c(xmin+0.5, xmax-0.5)) + ylim(c(100,350))
 
 # --------------------------------------------------------------------------------------------------
 # - SARIMA
-## TODO recalculate to get RSME
-#fc_sarima_nocov <- do_sarima(v_train, covariates=FALSE, auto=FALSE)
-#rmse_sarima_nocov = calc_rmse(v_test[,power], fc_sarima_nocov$mean)
-#cat("RMSE sariam no cov  :", rmse_sarima_nocov, "\n")
-#plot(fc_sarima_nocov, xlim=c(xmin,xmax))
+plot_text("SARIMA\n\n1. Without covariates\n2. With covariates\n")
+fc_sarima_nocov <- do_sarima(v_train, v_test, covariates=FALSE, auto=FALSE)
+plot(fc_sarima_nocov, xlim=c(xmin,xmax))
 
-## TODO recalculate to get RSME
-#fc_sarima_cov   <- do_sarima(v_train, covariates=TRUE , auto=FALSE)
-#rmse_sarima_cov = calc_rmse(v_test[,power], fc_sarima_cov$mean)
-#cat("RMSE sariam cov  :", rmse_sarima_cov, "\n")
-#plot(fc_sarima_cov, xlim=c(xmin,xmax))
+fc_sarima_cov   <- do_sarima(v_train, v_test, covariates=TRUE , auto=FALSE)
+plot(fc_sarima_cov, xlim=c(xmin,xmax))
 
-## Unique season fourier:
-#fc_sarima_fourier <- do_sarima_fourier(v_train)
-#rmse_fourier = calc_rmse(v_test[,power], fc_sarima_fourier$mean)
-#cat("RMSE fourier  :", rmse_fourier, "\n")
-#plot(fc_sarima_fourier, xlim=c(xmin,xmax))
+# Unique season fourier:
+plot_text("Fourier\n\n1. Single season\n2. Multi seasons\n")
+fc_sarima_fourier <- do_arima_fourier(v_train, v_test)
+plot(fc_sarima_fourier, xlim=c(xmin,xmax))
 
-## multi seasons fourier:
-#fc_sarima_multi_fourier <- do_sarima_multi_fourier(v_train)
-#rmse_multi_fourier = calc_rmse(v_test[,power], fc_sarima_multi_fourier$mean)
-#cat("RMSE multi fourier :", rmse_multi_fourier, "\n")
-#plot(fc_sarima_multi_fourier, xlim=c(xmin,xmax))
+# multi seasons fourier:
+fc_sarima_multi_fourier <- do_arima_multi_fourier(v_train, v_test)
+plot(fc_sarima_multi_fourier, xlim=c(xmin,xmax))
 
-#autoplot(v_train[,power]) +
-#  autolayer(v_test[,power]              , series="test") +
-#  autolayer(fc_sarima_nocov$mean, series='no cov', PI=FALSE) +
-#  autolayer(fc_sarima_cov$mean  , series='cov'   , PI=FALSE) +
-#  autolayer(fc_sarima_fourier$mean      , series='fourier', PI=FALSE) +
-#  autolayer(fc_sarima_multi_fourier$mean, series="multi"  , PI=FALSE) +
-#  xlim(c(xmin+0.5, xmax-0.5)) + ylim(c(100,350))
+autoplot(v_train[,power]) +
+  autolayer(v_test[,power]              , series="test") +
+  autolayer(fc_sarima_nocov$mean, series='no cov', PI=FALSE) +
+  autolayer(fc_sarima_cov$mean  , series='cov'   , PI=FALSE) +
+  autolayer(fc_sarima_fourier$mean      , series='fourier', PI=FALSE) +
+  autolayer(fc_sarima_multi_fourier$mean, series="multi"  , PI=FALSE) +
+  xlim(c(xmin+0.5, xmax-0.5)) + ylim(c(100,350))
 
 # --------------------------------------------------------------------------------------------------
 # - Random Forest
-plot_text("Random Forest")
-fc_rf <- do_randomForest(v_train, v_test)
-rmse_rf <- calc_rmse(fc_rf, v_test[,power])
-cat("RMSE RF :", rmse_fr, "\n")
+#plot_text("Random Forest")
+#fc_rf <- do_randomForest(v_train, v_test)
 
 # - Neural Network
-
 plot_text("NEURAL NETWORK\n\n1. Without covariates\n2. With covariates\n")
-plot_text("Coucou", y=0.5, newpage=FALSE)
+#plot_text("Coucou", y=0.5, newpage=FALSE)
 
 # without covariates:
-fc_nn_nocov <- do_NNet(v_train, covariates=FALSE)
-rmse_nn_nocov = calc_rmse(fc_nn_nocov$mean, v_test[,power])
-cat("RMSE NN no cov :", rmse_nn_nocov, "\n")
+fc_nn_nocov <- do_NNet(v_train, v_test, covariates=FALSE)
+plot(fc_nn_nocov, xlim=c(xmin,xmax))
 
 # with covariates:
-fc_nn_cov <- do_NNet(v_train, covariates=TRUE)
-rmse_nn_cov = calc_rmse(v_test[,power], fc_nn_cov$mean)
-cat("RMSE NN cov :", rmse_nn_cov, "\n")
+fc_nn_cov <- do_NNet(v_train, v_test, covariates=TRUE)
+plot(fc_nn_cov, xlim=c(xmin,xmax))
+
+# - XGBoost
+plot_text("XGBoost")
+fc_xgboost <- do_xgboost(v_train, v_test, covariates=FALSE)
+ts_xgboost = ts(fc_xgboost, start=start(v_test), end=end(v_test), frequency=96)
+plot(fc_xgboost, xlim=c(xmin,xmax))
 
 autoplot(v_train[,power]) +
   autolayer(v_test[,power]              , series="test") +
   autolayer(fc_nn_nocov, series="NN no cov") +
   autolayer(fc_nn_cov, series="NN cov") +
 #  autolayer(fc_rf, series="RandomForest") +
+  autolayer(ts_xgboost, series="XGBoost no cov") +
   xlim(c(xmin+0.5, xmax-0.5)) + ylim(c(100,350))
 
 # --------------------------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------------------------
-# --- TODO
-# - XGBoost
-
-# Model fit: 
-# - AIC/BIC, R2, RSME
-# - noise is white, gaussian
-
-
 # --------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------

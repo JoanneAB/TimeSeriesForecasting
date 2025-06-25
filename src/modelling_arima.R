@@ -19,7 +19,7 @@ do_arima <- function(v_train, v_test, covariates, auto)
     end.time <- Sys.time()
     cat("timing :", (end.time-start.time), "\n")
 
-    fc <- forecast(fit, xreg=v_train[,oat])
+    fc <- forecast(fit_auto, xreg=v_train[,oat], h=96)
     return(fc)
     }
 
@@ -36,7 +36,7 @@ do_arima <- function(v_train, v_test, covariates, auto)
     end.time <- Sys.time()
     cat("timing :", (end.time-start.time), "\n") # -> 6 sec
 
-    fc <- forecast(fit, xreg=v_train[,oat])
+    fc <- forecast(fit, xreg=v_train[,oat], h=96)
 
     rmse = calc_rmse(v_test[,power], fc$mean)
     cat("RMSE arima (with covariates) :", rmse, "\n")
@@ -58,7 +58,7 @@ do_arima <- function(v_train, v_test, covariates, auto)
     # positive : 45.5 ++(11h 30min), 50.0 (12h 30min),    54.1 (13h 30min)
     # Only in 1st period of PACF but 3 periods on ACF !!
 
-    fc <- forecast(fit)
+    fc <- forecast(fit, h=96)
 
     rmse = calc_rmse(v_test[,power], fc$mean)
     cat("RMSE arima (without covariates) :", rmse, "\n")
@@ -81,10 +81,10 @@ do_sarima <- function(v_train, v_test, covariates, auto)
     end.time <- Sys.time()
     cat("timing :", (end.time-start.time), "\n")
 
-    fc <- forecast(fit, xreg=v_train[,oat])
+    fc <- forecast(fit_auto, xreg=v_train[,oat], h=192)
 
     rmse = calc_rmse(v_test[,power], fc$mean)
-    cat("RMSE fourier (with covariates, auto) :", rmse, "\n")
+    cat("RMSE sarima (with covariates, auto) :", rmse, "\n")
     }
 
   if ( covariates )
@@ -106,7 +106,10 @@ do_sarima <- function(v_train, v_test, covariates, auto)
     end.time <- Sys.time()
     cat("timing :", (end.time-start.time), "\n")
 
-    fc <- forecast(fit, xreg=v_train[,oat])
+    fc <- forecast(fit, xreg=v_train[,oat], h=192)
+
+    rmse = calc_rmse(v_test[,power], fc$mean)
+    cat("RMSE SARIMA (with covariates) :", rmse, "\n")
     }
   else
     {
@@ -125,7 +128,10 @@ do_sarima <- function(v_train, v_test, covariates, auto)
     end.time <- Sys.time()
     cat("timing :", (end.time-start.time), "\n")
 
-    fc <- forecast(fit)
+    fc <- forecast(fit, h=192)
+
+    rmse = calc_rmse(v_test[,power], fc$mean)
+    cat("RMSE SARIMA (without covariates) :", rmse, "\n")
     }
 
   return(fc)
@@ -149,7 +155,7 @@ do_arima_fourier <- function(v_train, v_test)
     end.time <- Sys.time()
     cat("timing fourier:", (end.time-start.time), "\n")
 
-    fc_fourier <- forecast(fit_fourier, xreg=fourier(v_train[,power], K, 96))
+    fc_fourier <- forecast(fit_fourier, xreg=fourier(v_train[,power], K, 96), h=96)
 
     rmse = calc_rmse(v_test[,power], fc_fourier$mean)
     cat("RMSE fourier (single season) :", rmse, "\n")
@@ -186,7 +192,7 @@ do_arima_multi_fourier <- function(v_train, v_test)
 
   #checkresiduals(fit_msts)
   tsdisplay(fit_msts$residuals)
-  fc_msts <- forecast(fit_msts, xreg=fourier(v_train_msts, K, 96))
+  fc_msts <- forecast(fit_msts, xreg=fourier(v_train_msts, K, 96), h=96)
 
   rmse = calc_rmse(v_test[,power], fc_msts$mean)
   cat("RMSE fourier (multi seasons) :", rmse, "\n")

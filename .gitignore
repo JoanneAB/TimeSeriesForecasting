@@ -1,2 +1,5 @@
 2025-Exam.pdf
 src/test_examples/
+src/outputs
+*/*stdout
+*/*/*stdout

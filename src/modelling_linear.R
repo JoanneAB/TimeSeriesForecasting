@@ -6,7 +6,7 @@ check_linearity <- function(v_train)
   {
   # Check if linear trend and remove it
 
-  autoplot(decompose(v_train[,power]))
+  print(autoplot(decompose(v_train[,power])))
   #d1 <- diff(v_train[,power], difference=1, lag=96) # remove degree 1 trend
   d1 <- diff(v_train[,power], lag=96) # remove degree 1 trend
   ggtsdisplay(d1) # still trend. Remove it:

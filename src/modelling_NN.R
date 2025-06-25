@@ -83,17 +83,17 @@ do_NNet <- function(v_train, v_test, covariates=FALSE)
   if ( covariates )
     {
     start.time <- Sys.time()
-    fit  = nnetar(v_train[,power], xreg=v_train[,oat], p=4, P=2)
+    fit  = nnetar(v_train[,power], xreg=v_train[,oat], p=10, P=2)
 
-    # From grid-search, with no covariate, best model for p=4, P=2 -> rmse =  
+    # From grid-search, with no covariate, best model for p=10, P=2 -> rmse = 9.62
     # timing = 23
 
     checkresiduals(fit)
     tsdisplay(fit$residuals)
     end.time <- Sys.time()
-    cat("timing :", (end.time-start.time), "\n") # 1min 47
+    cat("timing :", (end.time-start.time), "\n") 
 
-    prev = forecast(fit, xreg=v_train[,oat], h=96) 
+    prev = forecast(fit, xreg=v_train[,oat], h=192) 
 
     rmse = calc_rmse(prev$mean, v_test[,power])
     cat("RMSE NN (with covariates) :", rmse, "\n")
@@ -101,21 +101,21 @@ do_NNet <- function(v_train, v_test, covariates=FALSE)
   else
     {
     start.time <- Sys.time()
-    fit  = nnetar(v_train[,power], p=7, P=3)
+    fit  = nnetar(v_train[,power], p=7, P=2)
 
     # NNAR(28,1,16)[96]
     # p-value < 2.2e-16 -> KO
     # sigma^2 estimated at 101.6
 
-    # From grid-search, with no covariate, best model for p=7, P=3 -> rmse = 10.45 
+    # From grid-search, with no covariate, best model for p=7, P=2 -> rmse = 9.43 
     # timing : 12 sec
 
     checkresiduals(fit)
     tsdisplay(fit$residuals)
     end.time <- Sys.time()
-    cat("timing :", (end.time-start.time), "\n") # 1min 47
+    cat("timing :", (end.time-start.time), "\n") 
 
-    prev = forecast(fit, h=96)  
+    prev = forecast(fit, h=192)
 
     rmse = calc_rmse(prev$mean, v_test[,power])
     cat("RMSE NN (without covariates) :", rmse, "\n")
@@ -133,22 +133,22 @@ do_NNet_gridSearch <- function(v_train, v_test)
     {
     for ( P in 1:5 ) # number of seasonal lag
       {
-      for ( k in (floor((p+P+1)/2)-3):(floor((p+P+1)/2)+3) ) # number of hidden node
-        {
-        #fit  = nnetar(v_train[,power], p=p, P=P, k=k)
-        fit  = nnetar(v_train[,power], xreg=v_train[,oat], p=p, P=P, k=k)
+#      for ( k in (floor((p+P+1)/2)-3):(floor((p+P+1)/2)+3) ) # number of hidden node
+#        {
+        fit  = nnetar(v_train[,power], p=p, P=P) #, k=k)
+        #fit  = nnetar(v_train[,power], xreg=v_train[,oat], p=p, P=P) #, k=k)
 
-        #prev = forecast(fit, h=96)
-        prev = forecast(fit, xreg=v_train[,oat], h=96)
+        prev = forecast(fit, h=96)
+        #prev = forecast(fit, xreg=v_train[,oat], h=96)
 
         #cat('p:',p,', P:',P,', k:',k,', RMSE:', calc_rmse(prev$mean, v_test[,power]),'\n')
-        cat('p:',p,', P:',P, ', k:',k, ' RMSE:', calc_rmse(prev$mean[1:96], v_test[1:96,power]),'\n')
+        cat('p:',p,', P:',P, ', RMSE:', calc_rmse(prev$mean, v_test[,power]),'\n')
         # no cov      : p=7, P=3, k=8 - rmse =  9.27 
         # no cov no k : p=7, P=3      - rmse = 10.14
 
         #    cov      : p=4, P=2, k=0 - rmse = 10.90
         #    cov no k : p=4, P=2      - rmse = 11.12
-        }
+#        }
       }
     }
   }

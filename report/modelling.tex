@@ -32,7 +32,7 @@ v_test  <- window(v, start=c(v_end[1], v_end[2]-2*96+1), end=v_end)
 
 \begin{figure}[H]
 \centering
- \includegraphics[scale=0.6]{figures/train_test_set.png}
+ \includegraphics[scale=0.65]{figures/train_test_set.png}
 \caption{Training and testing sets of the variables Power and OAT (Outer Air Temperature).}
 \label{figure_train_test_set}
 \end{figure}
@@ -42,13 +42,13 @@ v_test  <- window(v, start=c(v_end[1], v_end[2]-2*96+1), end=v_end)
 \subsection{SARIMA}
 Figure \ref{figure_decompose} shows high seasonality in the dataset therefore ARIMA methodology 
 would not be appropriate for this study. Seasonality ARIMA (SARIMA) method is applied. Due to the 
-long computation time (more than one hour per computation), grid-seach is not implemented to 
-search for the best parameters. See listing \ref{lst_sarima} for R-code. Figures 
+relatively long computation time (more than one hour per computation), grid-seach is not implemented 
+to search for the best parameters. See listing \ref{lst_sarima} for R-code. Figures 
 \ref{figure_residuals_sarima} and \ref{figure_fit_sarima} presents the best SARIMA model with 
 prediction for fitting with and without considering the OAT covariate.
 
-Table \ref{table_sarima} show few statistics of the models and show little improvement in the 
-fitting with OAT covariates.
+Table \ref{table_sarima} shows few statistics of the models and show little improvement in the 
+fitting when considering OAT covariates.
 
 \begin{table}[H]
 \centering \begin{tabular}{c|cc}
@@ -62,25 +62,26 @@ Computation time &  1h10     &  56 min \\
 \end{table}
 
 Noise residuals of this model (figure \ref{figure_residuals_sarima}, p-values in table 
-\ref{table_sarima}) show still significant signal that are not taken into account in this model. 
+\ref{table_sarima}) still show significant signals that are not taken into account with this model. 
 Increasing the values of the parameters seems to be necessary however, updating the parameters 
-lead to computational failure.
+led to computational failure.
 
 \begin{figure}[!h]
 \centering
  \includegraphics[scale=0.45]{figures/figure_residuals_sarima.png}
- \caption{Modelling and forecast using SARIMA algorithm with (1,0,3)(1,1,1)[96] parameters and OAT covariates.}
+ \caption{Modelling and forecasting using SARIMA algorithm with (1,0,3)(1,1,1)[96] parameters and OAT covariates.}
 \label{figure_residuals_sarima}
 \end{figure}
 
 \begin{figure}[H]
 \centering
  \includegraphics[scale=0.5]{figures/figure_fit_sarima.png}
-\caption{Power testing set and forecast using SARIMA algorith with (1,0,3)(1,1,1)[96] parameters 
-with (green line) and without OAT covariate (blue line).}
+\caption{Testing set and forecast of the Electricity consumption using SARIMA algorith with 
+(1,0,3)(1,1,1)[96] parameters with (green line) and without OAT covariate (blue line).}
 \label{figure_fit_sarima}
 \end{figure}
 
+\newpage
 \begin{lstlisting}[language=R, caption={R code for SARIMA modelling and forecasting}, captionpos=b, label={lst_sarima}]
   if ( covariates )
     {
@@ -117,23 +118,23 @@ with (green line) and without OAT covariate (blue line).}
 \subsection{Neural-Network}
 Grid-search analysis is performed to search for the best parameters \textit{i.e.} the set of 
 parameters that minimize the root-mean-square-error between the data and the model (see attached R 
-script files for complete code). Results show that the parameters (7,3,6) are the best-suited for 
-Neural Network modelling for Electricity consumption and the parameters (4,2,4) are the best-suited 
-when considering outer-air temperature data as a covariate. Modeling and forecasting using these 
+script files for complete code). Results show that parameters (7,3,6) are best-suited for Neural 
+Network modelling of the Electricity consumption and parameters (4,2,4) are best-suited when 
+considering outer-air temperature data as a covariate. Modeling and forecasting using these 
 parameters are presented in figures \ref{figure_residuals_NN} and \ref{figure_fit_NN}. Listing 
 \ref{lst_NN} presents the piece of R code used to model and forecast the electricity consumption. 
 
 \begin{figure}[H]
 \centering
- \includegraphics[scale=0.4]{figures/figure_residuals_NN.png}
+ \includegraphics[scale=0.35]{figures/figure_residuals_NN.png}
  \caption{Modelling using Neural Network algorithm with (7,3,6)[96] parameters when not considering OAT covariates and (4,2,4)[96] when considering OAT covariates.}
  \label{figure_residuals_NN}
 \end{figure}
 
 \begin{figure}[H]
 \centering
- \includegraphics[scale=0.5]{figures/figure_fit_NN.png}
-\caption{Power testing set (blue line) and forecast using Neural Network algorith with (red line) and without OAT covariate (green line).}
+ \includegraphics[scale=0.55]{figures/figure_fit_NN.png}
+\caption{Testing set (blue line) and forecast of the electricity consumption using Neural Network algorith with (red line) and without OAT covariate (green line).}
 \label{figure_fit_NN}
 \end{figure}
 
@@ -170,12 +171,12 @@ parameters are presented in figures \ref{figure_residuals_NN} and \ref{figure_fi
 \end{lstlisting}
 
 Residuals, auto-correlation and partial auto-correlation functions (figure 
-\ref{figure_residuals_NN}) and values of residuals (table \ref{table_NN}) show that the models are 
-not able to explain completely the data. We do observe seasons in the cross-correlation functions 
+\ref{figure_residuals_NN}) and values of residuals (table \ref{table_NN}) show that these models are 
+not able to fully explain the data. We do observe seasons in the cross-correlation functions 
 that differ from the main season. These two additional seasons have been identified with lags of 36 
 and 60 which corresponds to 9 and 15 hours respectively. Multi-season modelling (\textit{e.g.} 
-using arima/fourier modelling, see attached R-scripts for examples) could help model several 
-seasons. 
+using arima/fourier modelling, see attached R-scripts for examples) could help doing modellisation 
+and forecasting for this dataset with several seasons. 
 
 \begin{table}[H]
 \centering \begin{tabular}{c|cc}

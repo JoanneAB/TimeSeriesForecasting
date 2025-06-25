@@ -1,5 +1,12 @@
 % --------------------------------------------------------------------------------------------------
 \section{Discussion and concluding remarks}
+Table \ref{table_discussion} presents the root-mean-square-error and computation time for each of 
+the models presented in this report. Results show that adding Outer-Air-Temperature covariate does 
+not improve significantly the fit to the model.
+
+Model computed using XGBoost methodology as the minimum residual error and the faster computation 
+time. The forecast using this model is attached in a separate file, as the prefered model.
+
 \begin{table}[H]
 \centering \begin{tabular}{c|cc}
                                     & RMSE & Computation time\\\hline\hline
@@ -16,12 +23,9 @@ XGBoost (without covariates)        & 7.90  &  6 min
 \begin{figure}[!h]
 \centering
  \includegraphics[scale=0.6]{figures/figure_discussion.png}
-\caption{Modelling and forecast of electricity consumption.}
+\caption{Modelling and forecast of electricity consumption using Outer-Air Temperature as a covariate.}
 \label{figure_discussion}
 \end{figure}
 
-\red{\begin{itemize}
- \item with/with covariate : not much improvement
- \item XBGoost show best results in RMSE and computation time.
- \item all R code available in this file + github
-\end{itemize}}
+All R codes are available on Github (\url{https://github.com/JoanneAB/TimeSeriesForecasting}).
+

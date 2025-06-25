@@ -18,7 +18,7 @@ for (index in which(z[,"Power (kW)"]<120))
 
 \begin{figure}[H]
 \centering
- \includegraphics[scale=0.4]{figures/dataset.png}
+ \includegraphics[scale=0.45]{figures/dataset.png}
 \caption{Original dataset (left) and dataset with removed outliers (right).}
 \label{figure_dataset}
 \end{figure}
@@ -37,12 +37,12 @@ for (index in which(z[,"Power (kW)"]<120))
 % --------------------------------------------------------------------------------------------------
 \subsection{Trend and seasonality}
 Using moving averages, the \texttt{decompose} R function returns the trend and seasonal components 
-of the time series. Figure \ref{figure_decompose} presentes the components of the electricty power 
+of the time series. Figure \ref{figure_decompose} presents the components of the electricty power 
 time series. 
 
 \begin{figure}[H]
 \centering
- \includegraphics[scale=0.45]{figures/decompose.png}
+ \includegraphics[scale=0.5]{figures/decompose.png}
 \caption{Trend and seasonal components of the electricity consumption time series.}
 \label{figure_decompose}
 \end{figure}

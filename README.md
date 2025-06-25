@@ -8,11 +8,11 @@ Results show that XGBoost methodology is the best to model and predict the elect
 Moreover, results show that using the covariate outer-air temperature does not improve the 
 modelling. 
 
-A full report is availaible [report.pdf]{https://github.com/JoanneAB/TimeSeriesForecasting/blob/master/report/report.pdf}.
+A full report is availaible [report.pdf](https://github.com/JoanneAB/TimeSeriesForecasting/blob/master/report/report.pdf).
 
 ## How to use it ?
 
-This study uses R scripts. All scripts and functions are available [here]{https://github.com/JoanneAB/TimeSeriesForecasting/tree/master/src}
+This study uses R scripts. All scripts and functions are available [here](https://github.com/JoanneAB/TimeSeriesForecasting/tree/master/src)
 
 ## Technology stack
 
@@ -34,7 +34,7 @@ This study uses R scripts. All scripts and functions are available [here]{https:
 
 ## Credits
 
-This work has been developed as part of a project for the "Time series forecasting" class for Data Science Master's course in Data ScienceTech Institute (DSTI, France). Source codes and supplementary files are available at [https://github.com/JoanneAB/TimeSeriesForecasting]{https://github.com/JoanneAB/TimeSeriesForecasting}
+This work has been developed as part of a project for the "Time series forecasting" class for Data Science Master's course in Data ScienceTech Institute (DSTI, France). Source codes and supplementary files are available at [https://github.com/JoanneAB/TimeSeriesForecasting](https://github.com/JoanneAB/TimeSeriesForecasting)
 
 If you mention this project in a publication, please include the citations below.
 

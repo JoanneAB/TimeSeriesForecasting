@@ -16,7 +16,7 @@ source("functions.R")
 options(warn = -1) # Remove warnings
 
 # -------------------------------------------------------------------------------------------------- 
-index_start=1 ; xmin=2340 ; xmax=2343 ; filename="outputs/output_xgboost_1_final"
+index_start=1 ; xmin=2340 ; xmax=2343 ; filename="output_final"
 pdf(file=paste(filename,".pdf", sep="")) 
 
 # -------------------------------------------------------------------------------------------------- 
@@ -47,15 +47,16 @@ maxT = max(data$Timestamp)
 
 # --------------------------------------------------------------------------------------------------
 # Check that the dates have same step between every two consecutive entries:
-#steps = rep(1,length(data$Timestamp)-1)
-#for (i in 1:length(data$Timestamp)-1)
-#  steps[i] = data$Timestamp[i+1]-data$Timestamp[i]
-#hist(steps, freq=FALSE)
+plot_text("Check that the dates have same step\nbetween every two consecutive entries")
+steps = rep(1,length(data$Timestamp)-1)
+for (i in 1:length(data$Timestamp)-1)
+  steps[i] = data$Timestamp[i+1]-data$Timestamp[i]
+hist(steps, freq=FALSE)
 
 # --------------------------------------------------------------------------------------------------
 # Check if "Temp (C)" is the same as "OAT (F)"
 myCelsiusDiff = (data[,oat] - 32)/1.8 - data[,4]
-#summary(myCelsiusDiff) # difference is null -> It is the same data. No need to take temperature in degrees in working dataset
+summary(myCelsiusDiff) # difference is null -> It is the same data. No need to take temperature in degrees in working dataset
 
 # --------------------------------------------------------------------------------------------------
 #v <- xts(x=data[,2:3], order.by=data$Timestamp, frequency=96)
@@ -64,6 +65,7 @@ z <- zoo(data[,2:3], data$Timestamp)
 
 #summary(z)
 
+plot_text("Dataset")
 autoplot(z) + ggtitle("Elec_30_11_train") 
 autoplot(z, facet=NULL) + ggtitle("Elec_30_11_train") 
 
@@ -87,7 +89,7 @@ p <- plot(z, xlim=c(t1, t2), main="Search for periodicity : plot two days")
 # --------------------------------------------------------------------------------------------------
 # Missing data
 # 96 missing data only for the last day that needs to be forcasted ?
-#sum(is.na(z[nrow-96, power])) # = 0 -> No missing data elsewhere...
+sum(is.na(z[nrow-96, power])) # = 0 -> No missing data elsewhere...
 
 # --------------------------------------------------------------------------------------------------
 # Back from zoo to ts because many options are not available in zoo:
@@ -112,49 +114,50 @@ autoplot(v_train[,oat], series="OAT, train") + autolayer(v_test[,oat], series="O
 
 # --------------------------------------------------------------------------------------------------
 # check correlation
-#cc.test(v_train[,oat], v_train[,power], max.lag=10, plot=FALSE) 
+cc.test(v_train[,oat], v_train[,power], max.lag=10, plot=FALSE) 
 # p-values always 0.000<0.05 -> reject H0 -> no zero correlation -> high correlation
+
 # --------------------------------------------------------------------------------------------------
 # There is a seasonal pattern:
-#acf(v_train[,power], type="cor", lag=200, plot=TRUE)
+acf(v_train[,power], type="cor", lag=200, plot=TRUE)
 
 # --------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------
 # --- MODELLING ------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------
 # - SARIMA
-#plot_text("SARIMA\n\n1. Without covariates\n2. With covariates\n")
-#
-## without covariates:
-#fc_sarima_nocov <- do_sarima(v_train, v_test, covariates=FALSE, auto=FALSE)
-#plot(fc_sarima_nocov, xlim=c(xmin,xmax))
-#
-## with covariates:
-#fc_sarima_cov   <- do_sarima(v_train, v_test, covariates=TRUE , auto=FALSE)
-#plot(fc_sarima_cov, xlim=c(xmin,xmax))
-#
-#autoplot(v_train[,power]) + autolayer(v_test[,power]      , series="Test set") +
-#  autolayer(fc_sarima_nocov$mean, series='Without covariates', PI=FALSE) +
-#  autolayer(fc_sarima_cov$mean  , series='With covariates'   , PI=FALSE) +
-#  xlim(c(xmin+0.5, xmax-0.5)) + ylim(c(100,350))
-#
-## --------------------------------------------------------------------------------------------------
-## - Neural Network
-#plot_text("NEURAL NETWORK\n\n1. Without covariates\n2. With covariates\n")
-#
-## without covariates:
-#fc_nn_nocov <- do_NNet(v_train, v_test, covariates=FALSE)
-#plot(fc_nn_nocov, xlim=c(xmin,xmax))
-#
-## with covariates:
-#fc_nn_cov <- do_NNet(v_train, v_test, covariates=TRUE)
-#plot(fc_nn_cov, xlim=c(xmin,xmax))
-#
-#autoplot(v_train[,power]) + autolayer(v_test[,power], series="Test set") +
-#  autolayer(fc_nn_nocov   , series="Neural Network without covariates") +
-#  autolayer(fc_nn_cov     , series="Neural Network with covariates") +
-#  xlim(c(xmin+0.5, xmax-0.5)) + ylim(c(100,350))
-#
+plot_text("SARIMA\n\n1. Without covariates\n2. With covariates\n")
+
+# without covariates:
+fc_sarima_nocov <- do_sarima(v_train, v_test, covariates=FALSE, auto=FALSE)
+plot(fc_sarima_nocov, xlim=c(xmin,xmax))
+
+# with covariates:
+fc_sarima_cov   <- do_sarima(v_train, v_test, covariates=TRUE , auto=FALSE)
+plot(fc_sarima_cov, xlim=c(xmin,xmax))
+
+autoplot(v_train[,power]) + autolayer(v_test[,power]      , series="Test set") +
+  autolayer(fc_sarima_nocov$mean, series='Without covariates', PI=FALSE) +
+  autolayer(fc_sarima_cov$mean  , series='With covariates'   , PI=FALSE) +
+  xlim(c(xmin+0.5, xmax-0.5)) + ylim(c(100,350))
+
+# --------------------------------------------------------------------------------------------------
+# - Neural Network
+plot_text("NEURAL NETWORK\n\n1. Without covariates\n2. With covariates\n")
+
+# without covariates:
+fc_nn_nocov <- do_NNet(v_train, v_test, covariates=FALSE)
+plot(fc_nn_nocov, xlim=c(xmin,xmax))
+
+# with covariates:
+fc_nn_cov <- do_NNet(v_train, v_test, covariates=TRUE)
+plot(fc_nn_cov, xlim=c(xmin,xmax))
+
+autoplot(v_train[,power]) + autolayer(v_test[,power], series="Test set") +
+  autolayer(fc_nn_nocov   , series="Neural Network without covariates") +
+  autolayer(fc_nn_cov     , series="Neural Network with covariates") +
+  xlim(c(xmin+0.5, xmax-0.5)) + ylim(c(100,350))
+
 # - XGBoost
 plot_text("XGBoost")
 fc_xgboost <- do_xgboost(v_train, v_test, covariates=FALSE)
@@ -163,18 +166,18 @@ ts_xgboost = ts(fc_xgboost, start=start(v_test), end=end(v_test), frequency=96)
 plot(fc_xgboost, xlim=c(xmin,xmax))
 
 autoplot(v_train[,power]) + autolayer(v_test[,power], series="Test set") +
-#  autolayer(fc_nn_nocov   , series="Neural Network without covariates") +
-#  autolayer(fc_nn_cov     , series="Neural Network with covariates") +
+  autolayer(fc_nn_nocov   , series="Neural Network without covariates") +
+  autolayer(fc_nn_cov     , series="Neural Network with covariates") +
   autolayer(ts_xgboost    , series="XGBoost") +
   xlim(c(xmin+0.5, xmax-0.5)) + ylim(c(100,350))
 
-## --------------------------------------------------------------------------------------------------
-#autoplot(v_train[,power]) + autolayer(v_test[,power]        , series="Test set") +
-#  autolayer(fc_sarima_cov$mean    , series='SARIMA'         , PI=FALSE) +
-#  autolayer(fc_nn_cov             , series='Neural Network' , PI=FALSE) +
-#  autolayer(ts_xgboost            , series="XGBoost") +
-#  xlim(c(xmin+0.5, xmax-0.5)) + ylim(c(100,350))
-#
+# --------------------------------------------------------------------------------------------------
+autoplot(v_train[,power]) + autolayer(v_test[,power]        , series="Test set") +
+  autolayer(fc_sarima_cov$mean    , series='SARIMA'         , PI=FALSE) +
+  autolayer(fc_nn_cov             , series='Neural Network' , PI=FALSE) +
+  autolayer(ts_xgboost            , series="XGBoost") +
+  xlim(c(xmin+0.5, xmax-0.5)) + ylim(c(100,350))
+
 # --------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------
 save.image(file=paste(filename,".RData", sep=""))
